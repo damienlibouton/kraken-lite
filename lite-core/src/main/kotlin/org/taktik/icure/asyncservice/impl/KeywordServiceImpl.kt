@@ -11,16 +11,16 @@ import org.taktik.icure.pagination.PaginationElement
 
 @Service
 class KeywordServiceImpl(
-    private val keywordLogic: KeywordLogic
+	private val keywordLogic: KeywordLogic
 ) : KeywordService {
-    override suspend fun createKeyword(keyword: Keyword): Keyword? = keywordLogic.createKeyword(keyword)
-    override fun getAllKeywords(paginationOffset: PaginationOffset<Nothing>): Flow<PaginationElement> = keywordLogic.getAllKeywords(paginationOffset)
-    override fun getAllKeywords(): Flow<Keyword> = keywordLogic.getEntities()
-    override suspend fun getKeyword(keywordId: String): Keyword? = keywordLogic.getEntity(keywordId)
+	override suspend fun createKeyword(keyword: Keyword): Keyword = keywordLogic.createKeyword(keyword)
+	override fun getAllKeywords(paginationOffset: PaginationOffset<Nothing>): Flow<PaginationElement> = keywordLogic.getAllKeywords(paginationOffset)
+	override fun getAllKeywords(): Flow<Keyword> = keywordLogic.getEntities()
+	override suspend fun getKeyword(keywordId: String): Keyword? = keywordLogic.getEntity(keywordId)
 
-    override fun deleteKeywords(ids: Set<String>): Flow<Keyword> = keywordLogic.deleteEntities(ids.map { IdAndRev(it, null) })
+	override fun deleteKeywords(ids: Set<String>): Flow<Keyword> = keywordLogic.deleteEntities(ids.map { IdAndRev(it, null) })
 
-    override suspend fun modifyKeyword(keyword: Keyword): Keyword? = keywordLogic.modifyKeyword(keyword)
+	override suspend fun modifyKeyword(keyword: Keyword): Keyword? = keywordLogic.modifyKeyword(keyword)
 
-    override fun getKeywordsByUser(userId: String): Flow<Keyword> = keywordLogic.getKeywordsByUser(userId)
+	override fun getKeywordsByUser(userId: String): Flow<Keyword> = keywordLogic.getKeywordsByUser(userId)
 }

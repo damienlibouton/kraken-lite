@@ -8,9 +8,10 @@ import org.taktik.icure.entities.EntityReference
 
 @Service
 class EntityReferenceServiceImpl(
-    private val entityReferenceLogic: EntityReferenceLogic
+	private val entityReferenceLogic: EntityReferenceLogic
 ) : EntityReferenceService {
-    override suspend fun getLatest(prefix: String): EntityReference? = entityReferenceLogic.getLatest(prefix)
+	override suspend fun getLatest(prefix: String): EntityReference? = entityReferenceLogic.getLatest(prefix)
 
-    override fun createEntityReferences(entities: Collection<EntityReference>): Flow<EntityReference> = entityReferenceLogic.createEntities(entities)
+	override fun createEntityReferences(entities: Collection<EntityReference>): Flow<EntityReference> = entityReferenceLogic.createEntities(entities)
+	override suspend fun createEntityReference(entity: EntityReference): EntityReference = entityReferenceLogic.createEntity(entity)
 }

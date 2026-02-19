@@ -1,7 +1,6 @@
 package org.taktik.icure.asyncservice.impl
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.single
 import org.springframework.stereotype.Service
 import org.taktik.couchdb.DocIdentifier
 import org.taktik.couchdb.entity.IdAndRev
@@ -12,27 +11,27 @@ import org.taktik.icure.entities.TimeTable
 
 @Service
 class TimeTableServiceImpl(
-    private val timeTableLogic: TimeTableLogic
+	private val timeTableLogic: TimeTableLogic
 ) : TimeTableService {
-    override suspend fun createTimeTable(timeTable: TimeTable): TimeTable? = timeTableLogic.createTimeTable(timeTable)
-    override fun deleteTimeTables(ids: List<IdAndRev>): Flow<TimeTable> = timeTableLogic.deleteEntities(ids)
+	override suspend fun createTimeTable(timeTable: TimeTable): TimeTable = timeTableLogic.createTimeTable(timeTable)
+	override fun deleteTimeTables(ids: List<IdAndRev>): Flow<TimeTable> = timeTableLogic.deleteEntities(ids)
 
-    override suspend fun deleteTimeTable(id: String, rev: String?): TimeTable = timeTableLogic.deleteEntity(id, rev)
+	override suspend fun deleteTimeTable(id: String, rev: String?): TimeTable = timeTableLogic.deleteEntity(id, rev)
 
-    override suspend fun purgeTimeTable(id: String, rev: String): DocIdentifier = timeTableLogic.purgeEntity(id, rev)
+	override suspend fun purgeTimeTable(id: String, rev: String): DocIdentifier = timeTableLogic.purgeEntity(id, rev)
 
-    override suspend fun undeleteTimeTable(id: String, rev: String): TimeTable = timeTableLogic.undeleteEntity(id, rev)
+	override suspend fun undeleteTimeTable(id: String, rev: String): TimeTable = timeTableLogic.undeleteEntity(id, rev)
 
-    override suspend fun getTimeTable(timeTableId: String): TimeTable? = timeTableLogic.getTimeTable(timeTableId)
+	override suspend fun getTimeTable(timeTableId: String): TimeTable? = timeTableLogic.getTimeTable(timeTableId)
 
-    override fun getTimeTables(ids: List<String>): Flow<TimeTable> = timeTableLogic.getEntities(ids)
+	override fun getTimeTables(ids: List<String>): Flow<TimeTable> = timeTableLogic.getEntities(ids)
 
-    override fun getTimeTablesByPeriodAndAgendaId(startDate: Long, endDate: Long, agendaId: String): Flow<TimeTable> = timeTableLogic.getTimeTablesByPeriodAndAgendaId(startDate, endDate, agendaId)
+	override fun getTimeTablesByPeriodAndAgendaId(startDate: Long, endDate: Long, agendaId: String): Flow<TimeTable> = timeTableLogic.getTimeTablesByPeriodAndAgendaId(startDate, endDate, agendaId)
 
-    override fun getTimeTablesByAgendaId(agendaId: String): Flow<TimeTable> = timeTableLogic.getTimeTablesByAgendaId(agendaId)
+	override fun getTimeTablesByAgendaId(agendaId: String): Flow<TimeTable> = timeTableLogic.getTimeTablesByAgendaId(agendaId)
 
-    override suspend fun modifyTimeTable(timeTable: TimeTable): TimeTable = timeTableLogic.modifyEntities(listOf(timeTable)).single()
+	override suspend fun modifyTimeTable(timeTable: TimeTable): TimeTable = timeTableLogic.modifyEntity(timeTable)
 
-    override fun matchTimeTablesBy(filter: AbstractFilter<TimeTable>): Flow<String> = timeTableLogic.matchEntitiesBy(filter)
+	override fun matchTimeTablesBy(filter: AbstractFilter<TimeTable>): Flow<String> = timeTableLogic.matchEntitiesBy(filter)
 
 }

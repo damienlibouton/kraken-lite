@@ -33,21 +33,22 @@ class LiteWebConfig {
 @Configuration
 @EnableWebFlux
 class LiteWebFluxConfigurer(
-	private val pluginsManager: PluginsManager
+	private val pluginsManager: PluginsManager,
+	private val liteConfig: LiteConfig
 ) : SharedWebFluxConfiguration() {
 
 	override fun getJackson2JsonEncoder(): Jackson2JsonEncoder {
-		val objectMapper = ObjectMapper().registerModule(
-			KotlinModule.Builder()
-				.configure(KotlinFeature.NullIsSameAsDefault, true)
-				.build()
-		).apply { setSerializationInclusion(JsonInclude.Include.NON_NULL) }
+		val objectMapper = if (liteConfig.useCardinalDataModel) {
+			cardinalObjectMapper
+		} else {
+			legacyObjectMapper
+		}
 		return try {
 			pluginsManager.newInstance<Jackson2JsonEncoder>(
 				"org.taktik.icure.spring.encoder.PaginatedJackson2JsonEncoder",
 				objectMapper, arrayOf<MimeType>()
 			)
-		} catch (e: PluginsManager.InvalidPluginException) {
+		} catch (_: PluginsManager.InvalidPluginException) {
 			PaginatedCollectingJackson2JsonEncoder(objectMapper)
 		}
 	}

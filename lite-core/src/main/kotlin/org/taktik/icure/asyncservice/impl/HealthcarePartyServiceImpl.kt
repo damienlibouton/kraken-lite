@@ -16,70 +16,75 @@ import org.taktik.icure.pagination.PaginationElement
 
 @Service
 class HealthcarePartyServiceImpl(
-    private val healthcarePartyLogic: HealthcarePartyLogic
+	private val healthcarePartyLogic: HealthcarePartyLogic
 ) : HealthcarePartyService {
-    override suspend fun getHealthcareParty(id: String): HealthcareParty? = healthcarePartyLogic.getHealthcareParty(id)
+	override suspend fun getHealthcareParty(id: String): HealthcareParty? = healthcarePartyLogic.getHealthcareParty(id)
 
-    override fun listHealthcarePartiesBy(searchString: String, offset: Int, limit: Int): Flow<HealthcareParty> =
-        healthcarePartyLogic.listHealthcarePartiesBy(searchString, offset, limit)
+	override fun listHealthcarePartiesBy(searchString: String, offset: Int, limit: Int): Flow<HealthcareParty> =
+		healthcarePartyLogic.listHealthcarePartiesBy(searchString, offset, limit)
 
-    @Deprecated("A HCP may now have multiple AES Keys. Use getAesExchangeKeysForDelegate instead")
-    @Suppress("DEPRECATION")
-    override suspend fun getHcPartyKeysForDelegate(healthcarePartyId: String): Map<String, String> =
-        healthcarePartyLogic.getHcPartyKeysForDelegate(healthcarePartyId)
+	@Deprecated("A HCP may now have multiple AES Keys. Use getAesExchangeKeysForDelegate instead")
+	@Suppress("DEPRECATION")
+	override suspend fun getHcPartyKeysForDelegate(healthcarePartyId: String): Map<String, String> =
+		healthcarePartyLogic.getHcPartyKeysForDelegate(healthcarePartyId)
 
-    override suspend fun getAesExchangeKeysForDelegate(healthcarePartyId: String): Map<String, Map<String, Map<String, String>>> =
-        healthcarePartyLogic.getAesExchangeKeysForDelegate(healthcarePartyId)
+	override suspend fun getAesExchangeKeysForDelegate(healthcarePartyId: String): Map<String, Map<String, Map<String, String>>> =
+		healthcarePartyLogic.getAesExchangeKeysForDelegate(healthcarePartyId)
 
-    override suspend fun modifyHealthcareParty(healthcareParty: HealthcareParty): HealthcareParty? =
-        healthcarePartyLogic.modifyHealthcareParty(healthcareParty)
+	override suspend fun modifyHealthcareParty(healthcareParty: HealthcareParty): HealthcareParty = healthcarePartyLogic.modifyHealthcareParty(healthcareParty)
+	override fun modifyHealthcareParty(healthcareParties: List<HealthcareParty>): Flow<HealthcareParty> = healthcarePartyLogic.modifyHealthcareParties(healthcareParties)
 
-    override fun deleteHealthcareParties(ids: List<IdAndRev>): Flow<HealthcareParty> = healthcarePartyLogic.deleteEntities(ids)
-    override suspend fun deleteHealthcareParty(id: String, rev: String?): HealthcareParty = healthcarePartyLogic.deleteEntity(id, rev)
-    override suspend fun purgeHealthcareParty(id: String, rev: String): DocIdentifier = healthcarePartyLogic.purgeEntity(id, rev)
-    override suspend fun undeleteHealthcareParty(id: String, rev: String): HealthcareParty = healthcarePartyLogic.undeleteEntity(id, rev)
-    override suspend fun createHealthcareParty(healthcareParty: HealthcareParty): HealthcareParty? = healthcarePartyLogic.createHealthcareParty(healthcareParty)
+	override fun deleteHealthcareParties(ids: List<IdAndRev>): Flow<HealthcareParty> = healthcarePartyLogic.deleteEntities(ids)
+	override suspend fun deleteHealthcareParty(id: String, rev: String?): HealthcareParty = healthcarePartyLogic.deleteEntity(id, rev)
+	override suspend fun purgeHealthcareParty(id: String, rev: String): DocIdentifier = healthcarePartyLogic.purgeEntity(id, rev)
+	override fun purgeHealthcareParties(healthcarePartyIds: List<IdAndRev>): Flow<DocIdentifier> = healthcarePartyLogic.purgeEntities(healthcarePartyIds)
 
-    override fun findHealthcarePartiesBy(offset: PaginationOffset<String>, desc: Boolean?): Flow<PaginationElement> = healthcarePartyLogic.findHealthcarePartiesBy(offset, desc)
+	override suspend fun undeleteHealthcareParty(id: String, rev: String): HealthcareParty = healthcarePartyLogic.undeleteEntity(id, rev)
+	override fun undeleteHealthcareParties(healthcarePartyIds: List<IdAndRev>): Flow<HealthcareParty> = healthcarePartyLogic.undeleteEntities(healthcarePartyIds)
 
-    override fun findHealthcarePartiesBy(
-        fuzzyName: String,
-        offset: PaginationOffset<String>,
-        desc: Boolean?
-    ): Flow<PaginationElement> = healthcarePartyLogic.findHealthcarePartiesBy(fuzzyName, offset, desc)
+	override suspend fun createHealthcareParty(healthcareParty: HealthcareParty): HealthcareParty = healthcarePartyLogic.createHealthcareParty(healthcareParty)
+	override fun createHealthcareParties(healthcareParties: List<HealthcareParty>): Flow<HealthcareParty> = healthcarePartyLogic.createHealthcareParties(healthcareParties)
 
-    override fun listHealthcarePartiesByNihii(nihii: String): Flow<HealthcareParty>  = healthcarePartyLogic.listHealthcarePartiesByNihii(nihii)
+	override fun findHealthcarePartiesBy(offset: PaginationOffset<String>, desc: Boolean?): Flow<PaginationElement> = healthcarePartyLogic.findHealthcarePartiesBy(offset, desc)
 
-    override fun listHealthcarePartiesBySsin(ssin: String): Flow<HealthcareParty> = healthcarePartyLogic.listHealthcarePartiesBySsin(ssin)
+	override fun findHealthcarePartiesBy(
+		fuzzyName: String,
+		offset: PaginationOffset<String>,
+		desc: Boolean?
+	): Flow<PaginationElement> = healthcarePartyLogic.findHealthcarePartiesBy(fuzzyName, offset, desc)
 
-    override fun listHealthcarePartiesByName(name: String): Flow<HealthcareParty> = healthcarePartyLogic.listHealthcarePartiesByName(name)
+	override fun listHealthcarePartiesByNihii(nihii: String): Flow<HealthcareParty>  = healthcarePartyLogic.listHealthcarePartiesByNihii(nihii)
 
-    override suspend fun getPublicKey(healthcarePartyId: String): String? = healthcarePartyLogic.getPublicKey(healthcarePartyId)
-    override fun listHealthcarePartiesBySpecialityAndPostcode(
-        type: String,
-        spec: String,
-        firstCode: String,
-        lastCode: String,
-        offset: PaginationOffset<ComplexKey>
-    ): Flow<PaginationElement> = healthcarePartyLogic.listHealthcarePartiesBySpecialityAndPostcode(type, spec, firstCode, lastCode, offset)
+	override fun listHealthcarePartiesBySsin(ssin: String): Flow<HealthcareParty> = healthcarePartyLogic.listHealthcarePartiesBySsin(ssin)
 
-    override fun getHealthcareParties(ids: List<String>): Flow<HealthcareParty> = healthcarePartyLogic.getHealthcareParties(ids)
+	override fun listHealthcarePartiesByName(name: String): Flow<HealthcareParty> = healthcarePartyLogic.listHealthcarePartiesByName(name)
 
-    override fun findHealthcarePartiesBySsinOrNihii(
-        searchValue: String,
-        paginationOffset: PaginationOffset<String>,
-        desc: Boolean
-    ): Flow<PaginationElement> = healthcarePartyLogic.findHealthcarePartiesBySsinOrNihii(searchValue, paginationOffset, desc)
+	override suspend fun getPublicKey(healthcarePartyId: String): String? = healthcarePartyLogic.getPublicKey(healthcarePartyId)
+	override fun listHealthcarePartiesBySpecialityAndPostcode(
+		type: String,
+		spec: String,
+		firstCode: String,
+		lastCode: String,
+		offset: PaginationOffset<ComplexKey>
+	): Flow<PaginationElement> = healthcarePartyLogic.listHealthcarePartiesBySpecialityAndPostcode(type, spec, firstCode, lastCode, offset)
 
-    override fun getHealthcarePartiesByParentId(parentId: String): Flow<HealthcareParty> = healthcarePartyLogic.getHealthcarePartiesByParentId(parentId)
+	override fun getHealthcareParties(ids: List<String>): Flow<HealthcareParty> = healthcarePartyLogic.getHealthcareParties(ids)
 
-    override suspend fun getHcpHierarchyIds(sender: HealthcareParty): HashSet<String> = healthcarePartyLogic.getHcpHierarchyIds(sender)
+	override fun findHealthcarePartiesBySsinOrNihii(
+		searchValue: String,
+		paginationOffset: PaginationOffset<String>,
+		desc: Boolean
+	): Flow<PaginationElement> = healthcarePartyLogic.findHealthcarePartiesBySsinOrNihii(searchValue, paginationOffset, desc)
 
-    override fun filterHealthcareParties(
-        paginationOffset: PaginationOffset<Nothing>,
-        filter: FilterChain<HealthcareParty>
-    ): Flow<ViewQueryResultEvent> = healthcarePartyLogic.filterHealthcareParties(paginationOffset, filter)
+	override fun getHealthcarePartiesByParentId(parentId: String): Flow<HealthcareParty> = healthcarePartyLogic.getHealthcarePartiesByParentId(parentId)
 
-    override fun modifyHealthcareParties(entities: Collection<HealthcareParty>): Flow<HealthcareParty> = healthcarePartyLogic.modifyEntities(entities)
-    override fun matchHealthcarePartiesBy(filter: AbstractFilter<HealthcareParty>): Flow<String> = healthcarePartyLogic.matchEntitiesBy(filter)
+	override suspend fun getHcpHierarchyIds(sender: HealthcareParty): HashSet<String> = healthcarePartyLogic.getHcpHierarchyIds(sender)
+
+	override fun filterHealthcareParties(
+		paginationOffset: PaginationOffset<Nothing>,
+		filter: FilterChain<HealthcareParty>
+	): Flow<ViewQueryResultEvent> = healthcarePartyLogic.filterHealthcareParties(paginationOffset, filter)
+
+	override fun modifyHealthcareParties(entities: Collection<HealthcareParty>): Flow<HealthcareParty> = healthcarePartyLogic.modifyEntities(entities)
+	override fun matchHealthcarePartiesBy(filter: AbstractFilter<HealthcareParty>): Flow<String> = healthcarePartyLogic.matchEntitiesBy(filter)
 }
