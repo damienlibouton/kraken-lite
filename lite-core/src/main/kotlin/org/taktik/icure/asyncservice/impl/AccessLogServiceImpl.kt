@@ -1,7 +1,6 @@
 package org.taktik.icure.asyncservice.impl
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.singleOrNull
 import org.springframework.stereotype.Service
 import org.taktik.couchdb.DocIdentifier
 import org.taktik.couchdb.entity.ComplexKey
@@ -18,62 +17,65 @@ import org.taktik.icure.pagination.PaginationElement
 
 @Service
 class AccessLogServiceImpl(
-    private val accessLogLogic: AccessLogLogic
+	private val accessLogLogic: AccessLogLogic
 ) : AccessLogService {
-    override suspend fun createAccessLog(accessLog: AccessLog): AccessLog? = accessLogLogic.createAccessLog(accessLog)
-    override fun deleteAccessLogs(ids: List<IdAndRev>): Flow<AccessLog> = accessLogLogic.deleteEntities(ids)
-    override suspend fun deleteAccessLog(id: String, rev: String?): AccessLog = accessLogLogic.deleteEntity(id, rev)
-    override suspend fun purgeAccessLog(id: String, rev: String): DocIdentifier = accessLogLogic.purgeEntity(id, rev)
-    override suspend fun undeleteAccessLog(id: String, rev: String): AccessLog = accessLogLogic.undeleteEntity(id, rev)
+	override suspend fun createAccessLog(accessLog: AccessLog): AccessLog = accessLogLogic.createAccessLog(accessLog)
+	override fun createAccessLogs(accessLog: List<AccessLog>): Flow<AccessLog> = accessLogLogic.createAccessLogs(accessLog)
+	override fun deleteAccessLogs(ids: List<IdAndRev>): Flow<AccessLog> = accessLogLogic.deleteEntities(ids)
+	override suspend fun deleteAccessLog(id: String, rev: String?): AccessLog = accessLogLogic.deleteEntity(id, rev)
+	override suspend fun purgeAccessLog(id: String, rev: String): DocIdentifier = accessLogLogic.purgeEntity(id, rev)
+	override fun purgeAccessLogs(ids: List<IdAndRev>): Flow<DocIdentifier> = accessLogLogic.purgeEntities(ids)
 
-    @Suppress("DEPRECATION")
-    @Deprecated("This method cannot include results with secure delegations, use listAccessLogIdsByDataOwnerPatientDate instead")
-    override fun listAccessLogsByHCPartyAndSecretPatientKeys(
-        hcPartyId: String,
-        secretForeignKeys: List<String>
-    ): Flow<AccessLog> = accessLogLogic.listAccessLogsByHCPartyAndSecretPatientKeys(hcPartyId, secretForeignKeys)
+	override suspend fun undeleteAccessLog(id: String, rev: String): AccessLog = accessLogLogic.undeleteEntity(id, rev)
+	override fun undeleteAccessLogs(ids: List<IdAndRev>): Flow<AccessLog> = accessLogLogic.undeleteEntities(ids)
 
-    override suspend fun getAccessLog(accessLogId: String): AccessLog? = accessLogLogic.getAccessLog(accessLogId)
-    override fun getAccessLogs(ids: List<String>): Flow<AccessLog> = accessLogLogic.getAccessLogs(ids)
+	@Suppress("DEPRECATION")
+	@Deprecated("This method cannot include results with secure delegations, use listAccessLogIdsByDataOwnerPatientDate instead")
+	override fun listAccessLogsByHCPartyAndSecretPatientKeys(
+		hcPartyId: String,
+		secretForeignKeys: List<String>
+	): Flow<AccessLog> = accessLogLogic.listAccessLogsByHCPartyAndSecretPatientKeys(hcPartyId, secretForeignKeys)
 
-    override fun listAccessLogsBy(
-        fromEpoch: Long,
-        toEpoch: Long,
-        paginationOffset: PaginationOffset<Long>,
-        descending: Boolean
-    ): Flow<PaginationElement> = accessLogLogic.listAccessLogsBy(fromEpoch, toEpoch, paginationOffset, descending)
+	override suspend fun getAccessLog(accessLogId: String): AccessLog? = accessLogLogic.getAccessLog(accessLogId)
+	override fun getAccessLogs(ids: List<String>): Flow<AccessLog> = accessLogLogic.getAccessLogs(ids)
 
-    override fun findAccessLogsByUserAfterDate(
-        userId: String,
-        accessType: String?,
-        startDate: Long?,
-        pagination: PaginationOffset<ComplexKey>,
-        descending: Boolean
-    ): Flow<PaginationElement> = accessLogLogic.findAccessLogsByUserAfterDate(userId, accessType, startDate, pagination, descending)
+	override fun listAccessLogsBy(
+		fromEpoch: Long,
+		toEpoch: Long,
+		paginationOffset: PaginationOffset<Long>,
+		descending: Boolean
+	): Flow<PaginationElement> = accessLogLogic.listAccessLogsBy(fromEpoch, toEpoch, paginationOffset, descending)
 
-    override suspend fun modifyAccessLog(accessLog: AccessLog): AccessLog? = accessLogLogic.modifyEntities(listOf(accessLog)).singleOrNull()
+	override fun findAccessLogsByUserAfterDate(
+		userId: String,
+		accessType: String?,
+		startDate: Long?,
+		pagination: PaginationOffset<ComplexKey>,
+		descending: Boolean
+	): Flow<PaginationElement> = accessLogLogic.findAccessLogsByUserAfterDate(userId, accessType, startDate, pagination, descending)
 
-    override fun getGenericLogic(): AccessLogLogic = accessLogLogic
+	override suspend fun modifyAccessLog(accessLog: AccessLog): AccessLog = accessLogLogic.modifyEntity(accessLog)
+	override fun modifyAccessLogs(accessLogs: List<AccessLog>): Flow<AccessLog> = accessLogLogic.modifyEntities(accessLogs)
 
-    override suspend fun aggregatePatientByAccessLogs(
-        userId: String,
-        accessType: String?,
-        startDate: Long?,
-        startKey: String?,
-        startDocumentId: String?,
-        limit: Int
-    ): AggregatedAccessLogs = accessLogLogic.aggregatePatientByAccessLogs(userId, accessType, startDate, startKey, startDocumentId, limit)
+	override fun getGenericLogic(): AccessLogLogic = accessLogLogic
 
-    override fun listAccessLogIdsByDataOwnerPatientDate(
-        dataOwnerId: String,
-        secretForeignKeys: Set<String>,
-        startDate: Long?,
-        endDate: Long?,
-        descending: Boolean
-    ): Flow<String> = accessLogLogic.listAccessLogIdsByDataOwnerPatientDate(dataOwnerId, secretForeignKeys, startDate, endDate, descending)
+	override suspend fun aggregatePatientByAccessLogs(
+		userId: String,
+		accessType: String?,
+		startDate: Long?,
+		startKey: String?,
+		startDocumentId: String?,
+		limit: Int
+	): AggregatedAccessLogs = accessLogLogic.aggregatePatientByAccessLogs(userId, accessType, startDate, startKey, startDocumentId, limit)
 
-    override fun matchAccessLogsBy(filter: AbstractFilter<AccessLog>): Flow<String> = accessLogLogic.matchEntitiesBy(filter)
+	override fun listAccessLogIdsByDataOwnerPatientDate(
+		dataOwnerId: String,
+		secretForeignKeys: Set<String>,
+		startDate: Long?,
+		endDate: Long?,
+		descending: Boolean
+	): Flow<String> = accessLogLogic.listAccessLogIdsByDataOwnerPatientDate(dataOwnerId, secretForeignKeys, startDate, endDate, descending)
 
-
-    override fun bulkShareOrUpdateMetadata(requests: BulkShareOrUpdateMetadataParams): Flow<EntityBulkShareResult<AccessLog>> = accessLogLogic.bulkShareOrUpdateMetadata(requests)
+	override fun matchAccessLogsBy(filter: AbstractFilter<AccessLog>): Flow<String> = accessLogLogic.matchEntitiesBy(filter)
+	override fun bulkShareOrUpdateMetadata(requests: BulkShareOrUpdateMetadataParams): Flow<EntityBulkShareResult<AccessLog>> = accessLogLogic.bulkShareOrUpdateMetadata(requests)
 }

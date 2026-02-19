@@ -3,8 +3,6 @@ package org.taktik.icure.asyncservice.impl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 import org.taktik.couchdb.DocIdentifier
@@ -64,15 +62,15 @@ class MessageServiceImpl(
 		messageLogic.addDelegation(it, delegation)
 	}
 
-	override suspend fun createMessage(message: Message): Message? = messageLogic.createMessage(message)
-
-	override fun createMessages(entities: Collection<Message>): Flow<Message> = messageLogic.createMessages(entities)
+	override suspend fun createMessage(message: Message): Message = messageLogic.createMessage(message)
+	override fun createMessages(entities: List<Message>): Flow<Message> = messageLogic.createMessages(entities)
 
 	override suspend fun getMessage(messageId: String): Message? = messageLogic.getMessage(messageId)
 
 	override fun getMessages(messageIds: List<String>): Flow<Message> = messageLogic.getMessages(messageIds)
 
-	override suspend fun modifyMessage(message: Message): Message? = messageLogic.modifyEntities(flowOf(message)).singleOrNull()
+	override suspend fun modifyMessage(message: Message): Message = messageLogic.modifyEntity(message)
+	override fun modifyMessages(messages: List<Message>): Flow<Message> = messageLogic.modifyEntities(messages)
 
 	@Suppress("DEPRECATION")
 	@Deprecated("This method cannot include results with secure delegations, use listMessageIdsByDataOwnerPatientSentDate instead")
@@ -134,7 +132,11 @@ class MessageServiceImpl(
 	override fun deleteMessages(ids: List<IdAndRev>): Flow<Message> = messageLogic.deleteEntities(ids)
 	override suspend fun deleteMessage(id: String, rev: String?): Message = messageLogic.deleteEntity(id, rev)
 	override suspend fun purgeMessage(id: String, rev: String): DocIdentifier = messageLogic.purgeEntity(id, rev)
+	override fun purgeMessages(messageIds: List<IdAndRev>): Flow<DocIdentifier> = messageLogic.purgeEntities(messageIds)
+
 	override suspend fun undeleteMessage(id: String, rev: String): Message = messageLogic.undeleteEntity(id, rev)
+	override fun undeleteMessages(messageIds: List<IdAndRev>): Flow<Message> = messageLogic.undeleteEntities(messageIds)
+
 	override fun matchMessagesBy(filter: AbstractFilter<Message>): Flow<String> = messageLogic.matchEntitiesBy(filter)
 
 	override fun bulkShareOrUpdateMetadata(requests: BulkShareOrUpdateMetadataParams): Flow<EntityBulkShareResult<Message>> = messageLogic.bulkShareOrUpdateMetadata(requests)

@@ -12,9 +12,10 @@ import org.taktik.icure.entities.requests.BulkShareOrUpdateMetadataParams
 class ApplicationSettingsServiceImpl(
 	private val applicationSettingsLogic: ApplicationSettingsLogic
 ) : ApplicationSettingsService {
-	override suspend fun createApplicationSettings(applicationSettings: ApplicationSettings): ApplicationSettings? = applicationSettingsLogic.createApplicationSettings(applicationSettings)
+	override suspend fun createApplicationSettings(applicationSettings: ApplicationSettings): ApplicationSettings =
+		applicationSettingsLogic.createApplicationSettings(applicationSettings)
 
-	override suspend fun modifyApplicationSettings(applicationSettings: ApplicationSettings): ApplicationSettings? = applicationSettingsLogic.modifyEntities(listOf(applicationSettings)).singleOrNull()
+	override suspend fun modifyApplicationSettings(applicationSettings: ApplicationSettings): ApplicationSettings = applicationSettingsLogic.modifyEntity(applicationSettings)
 
 	override fun getAllApplicationSettings(): Flow<ApplicationSettings> = applicationSettingsLogic.getEntities()
 

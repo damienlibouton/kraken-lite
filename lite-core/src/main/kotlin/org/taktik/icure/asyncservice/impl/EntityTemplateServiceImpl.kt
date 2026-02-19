@@ -9,44 +9,44 @@ import org.taktik.icure.entities.EntityTemplate
 
 @Service
 class EntityTemplateServiceImpl(
-    private val entityTemplateLogic: EntityTemplateLogic
+	private val entityTemplateLogic: EntityTemplateLogic
 ) : EntityTemplateService {
-    override suspend fun createEntityTemplate(entityTemplate: EntityTemplate): EntityTemplate? = entityTemplateLogic.createEntityTemplate(entityTemplate)
+	override suspend fun createEntityTemplate(entityTemplate: EntityTemplate): EntityTemplate = entityTemplateLogic.createEntityTemplate(entityTemplate)
 
-    override suspend fun modifyEntityTemplate(entityTemplate: EntityTemplate): EntityTemplate? = entityTemplateLogic.modifyEntityTemplate(entityTemplate)
+	override suspend fun modifyEntityTemplate(entityTemplate: EntityTemplate): EntityTemplate? = entityTemplateLogic.modifyEntityTemplate(entityTemplate)
 
-    override suspend fun getEntityTemplate(id: String): EntityTemplate? = entityTemplateLogic.getEntityTemplate(id)
+	override suspend fun getEntityTemplate(id: String): EntityTemplate? = entityTemplateLogic.getEntityTemplate(id)
 
-    override fun getEntityTemplates(selectedIds: Collection<String>): Flow<EntityTemplate> = entityTemplateLogic.getEntityTemplates(selectedIds)
+	override fun getEntityTemplates(selectedIds: Collection<String>): Flow<EntityTemplate> = entityTemplateLogic.getEntityTemplates(selectedIds)
 
-    override fun listEntityTemplatesBy(
-        userId: String,
-        entityType: String,
-        searchString: String?,
-        includeEntities: Boolean?
-    ): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesBy(userId, entityType, searchString, includeEntities)
+	override fun listEntityTemplatesBy(
+		userId: String,
+		entityType: String,
+		searchString: String?,
+		includeEntities: Boolean?
+	): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesBy(userId, entityType, searchString, includeEntities)
 
-    override fun listEntityTemplatesBy(
-        entityType: String,
-        searchString: String?,
-        includeEntities: Boolean?
-    ): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesBy(entityType, searchString, includeEntities)
+	override fun listEntityTemplatesBy(
+		entityType: String,
+		searchString: String?,
+		includeEntities: Boolean?
+	): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesBy(entityType, searchString, includeEntities)
 
-    override fun listEntityTemplatesByKeyword(
-        userId: String,
-        entityType: String,
-        keyword: String?,
-        includeEntities: Boolean?
-    ): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesByKeyword(userId, entityType, keyword, includeEntities)
+	override fun listEntityTemplatesByKeyword(
+		userId: String,
+		entityType: String,
+		keyword: String?,
+		includeEntities: Boolean?
+	): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesByKeyword(userId, entityType, keyword, includeEntities)
 
-    override fun listEntityTemplatesByKeyword(
-        entityType: String,
-        keyword: String?,
-        includeEntities: Boolean?
-    ): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesByKeyword(entityType, keyword, includeEntities)
+	override fun listEntityTemplatesByKeyword(
+		entityType: String,
+		keyword: String?,
+		includeEntities: Boolean?
+	): Flow<EntityTemplate> = entityTemplateLogic.listEntityTemplatesByKeyword(entityType, keyword, includeEntities)
 
-    override fun modifyEntityTemplates(entities: Collection<EntityTemplate>): Flow<EntityTemplate> = entityTemplateLogic.modifyEntities(entities)
+	override fun modifyEntityTemplates(entities: Collection<EntityTemplate>): Flow<EntityTemplate> = entityTemplateLogic.modifyEntities(entities)
 
-    override fun createEntityTemplates(entities: Collection<EntityTemplate>): Flow<EntityTemplate> = entityTemplateLogic.createEntities(entities)
-    override fun deleteEntityTemplates(ids: List<IdAndRev>): Flow<EntityTemplate> = entityTemplateLogic.deleteEntities(ids)
+	override fun createEntityTemplates(entities: Collection<EntityTemplate>): Flow<EntityTemplate> = entityTemplateLogic.createEntities(entities)
+	override fun deleteEntityTemplates(ids: List<IdAndRev>): Flow<EntityTemplate> = entityTemplateLogic.deleteEntities(ids)
 }

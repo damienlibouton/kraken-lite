@@ -7,8 +7,8 @@ import org.taktik.icure.spring.asynccache.AsyncMapCacheManager
 
 @Configuration
 class LiteCoreConfig {
-    @Bean
-    fun asyncCacheManager(
-        entitiesCacheProperties: IcureEntitiesCacheProperties
-    ) = AsyncMapCacheManager(entitiesCacheProperties)
+	@Bean
+	fun asyncCacheManager(
+		entitiesCacheProperties: IcureEntitiesCacheProperties
+	) = AsyncMapCacheManager(entitiesCacheProperties)
 }

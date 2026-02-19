@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.taktik.couchdb.entity.IdAndRev
 import org.taktik.couchdb.id.UUIDGenerator
 import org.taktik.icure.asyncdao.AgendaDAO
 import org.taktik.icure.asyncdao.ApplicationSettingsDAO
 import org.taktik.icure.asyncdao.CalendarItemDAO
+import org.taktik.icure.asyncdao.CalendarItemTypeDAO
 import org.taktik.icure.asyncdao.ClassificationDAO
 import org.taktik.icure.asyncdao.CodeDAO
 import org.taktik.icure.asyncdao.ContactDAO
@@ -30,6 +32,7 @@ import org.taktik.icure.asyncdao.MaintenanceTaskDAO
 import org.taktik.icure.asyncdao.MedicalLocationDAO
 import org.taktik.icure.asyncdao.MessageDAO
 import org.taktik.icure.asyncdao.PatientDAO
+import org.taktik.icure.asyncdao.PlaceDAO
 import org.taktik.icure.asyncdao.ReceiptDAO
 import org.taktik.icure.asyncdao.SecureDelegationKeyMapDAO
 import org.taktik.icure.asyncdao.TarificationDAO
@@ -37,6 +40,7 @@ import org.taktik.icure.asyncdao.UserDAO
 import org.taktik.icure.asynclogic.AgendaLogic
 import org.taktik.icure.asynclogic.ApplicationSettingsLogic
 import org.taktik.icure.asynclogic.CalendarItemLogic
+import org.taktik.icure.asynclogic.CalendarItemTypeLogic
 import org.taktik.icure.asynclogic.ClassificationLogic
 import org.taktik.icure.asynclogic.CodeLogic
 import org.taktik.icure.asynclogic.ContactLogic
@@ -55,6 +59,7 @@ import org.taktik.icure.asynclogic.MaintenanceTaskLogic
 import org.taktik.icure.asynclogic.MedicalLocationLogic
 import org.taktik.icure.asynclogic.MessageLogic
 import org.taktik.icure.asynclogic.PatientLogic
+import org.taktik.icure.asynclogic.PlaceLogic
 import org.taktik.icure.asynclogic.ReceiptLogic
 import org.taktik.icure.asynclogic.SecureDelegationKeyMapLogic
 import org.taktik.icure.asynclogic.SessionInformationProvider
@@ -64,6 +69,7 @@ import org.taktik.icure.datastore.DatastoreInstanceProvider
 import org.taktik.icure.asynclogic.impl.AgendaLogicImpl
 import org.taktik.icure.asynclogic.impl.ApplicationSettingsLogicImpl
 import org.taktik.icure.asynclogic.impl.CalendarItemLogicImpl
+import org.taktik.icure.asynclogic.impl.CalendarItemTypeLogicImpl
 import org.taktik.icure.asynclogic.impl.ClassificationLogicImpl
 import org.taktik.icure.asynclogic.impl.CodeLogicImpl
 import org.taktik.icure.asynclogic.impl.ContactLogicImpl
@@ -82,6 +88,7 @@ import org.taktik.icure.asynclogic.impl.MaintenanceTaskLogicImpl
 import org.taktik.icure.asynclogic.impl.MedicalLocationLogicImpl
 import org.taktik.icure.asynclogic.impl.MessageLogicImpl
 import org.taktik.icure.asynclogic.impl.PatientLogicImpl
+import org.taktik.icure.asynclogic.impl.PlaceLogicImpl
 import org.taktik.icure.asynclogic.impl.ReceiptLogicImpl
 import org.taktik.icure.asynclogic.impl.SecureDelegationKeyMapLogicImpl
 import org.taktik.icure.asynclogic.impl.SessionInformationProviderImpl
@@ -111,10 +118,12 @@ class LiteLogicConfig {
 	@Bean
 	fun liteFixer(
 		sessionInformationProvider: SessionInformationProvider,
+		liteConfig: LiteConfig
 	): Fixer = FixerImpl(
 		fixedValueProvider = CommonFixedValueProvider(
 			dataOwnerProvider = sessionInformationProvider
-		)
+		),
+		forceSkipLegacyFixing = liteConfig.useCardinalDataModel
 	)
 
 	@Bean
@@ -136,6 +145,7 @@ class LiteLogicConfig {
 			override suspend fun tryUpdate(updatedUser: User): User = updatedUser
 			override fun tryingUpdates(updatedUsers: Flow<User>): Flow<User> = updatedUsers
 			override suspend fun tryPurge(localId: String, localRev: String) { }
+			override suspend fun tryPurge(userIds: List<IdAndRev>) { }
 		}
 	)
 
@@ -177,6 +187,19 @@ class LiteLogicConfig {
 		datastoreInstanceProvider: DatastoreInstanceProvider
 	): CodeLogic = CodeLogicImpl(
 		codeDAO = codeDAO,
+		filters = filters,
+		datastoreInstanceProvider = datastoreInstanceProvider,
+		fixer = fixer
+	)
+
+	@Bean
+	fun calendarItemTypeLogic(
+		calendarItemTypeDAO: CalendarItemTypeDAO,
+		filters: Filters,
+		fixer: Fixer,
+		datastoreInstanceProvider: DatastoreInstanceProvider
+	): CalendarItemTypeLogic = CalendarItemTypeLogicImpl(
+		calendarItemTypeDAO = calendarItemTypeDAO,
 		filters = filters,
 		datastoreInstanceProvider = datastoreInstanceProvider,
 		fixer = fixer
@@ -333,6 +356,19 @@ class LiteLogicConfig {
 		patientDAO = patientDAO,
 		filters = filters,
 		exchangeDataMapLogic = exchangeDataMapLogic,
+		datastoreInstanceProvider = datastoreInstanceProvider,
+		fixer = fixer
+	)
+
+	@Bean
+	fun placeLogic(
+		placeDAO: PlaceDAO,
+		filters: Filters,
+		datastoreInstanceProvider: DatastoreInstanceProvider,
+		fixer: Fixer
+	): PlaceLogic = PlaceLogicImpl(
+		placeDAO = placeDAO,
+		filters = filters,
 		datastoreInstanceProvider = datastoreInstanceProvider,
 		fixer = fixer
 	)

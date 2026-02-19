@@ -25,13 +25,13 @@ import org.taktik.icure.pagination.PaginationElement
 class InvoiceServiceImpl(
 	private val invoiceLogic: InvoiceLogic
 ) : InvoiceService {
-	override suspend fun createInvoice(invoice: Invoice): Invoice? = invoiceLogic.createInvoice(invoice)
+	override suspend fun createInvoice(invoice: Invoice): Invoice = invoiceLogic.createInvoice(invoice)
 
 	override suspend fun getInvoice(invoiceId: String): Invoice? = invoiceLogic.getInvoice(invoiceId)
 
 	override fun getInvoices(ids: List<String>): Flow<Invoice> = invoiceLogic.getInvoices(ids)
 
-	override suspend fun modifyInvoice(invoice: Invoice): Invoice? = invoiceLogic.modifyInvoice(invoice)
+	override suspend fun modifyInvoice(invoice: Invoice): Invoice = invoiceLogic.modifyInvoice(invoice)
 
 	override fun modifyInvoices(invoices: List<Invoice>): Flow<Invoice> = invoiceLogic.modifyEntities(invoices)
 
@@ -145,6 +145,9 @@ class InvoiceServiceImpl(
 	override fun deleteInvoices(ids: List<IdAndRev>): Flow<Invoice> = invoiceLogic.deleteEntities(ids)
 	override suspend fun deleteInvoice(id: String, rev: String?): Invoice = invoiceLogic.deleteEntity(id, rev)
 	override suspend fun purgeInvoice(id: String, rev: String): DocIdentifier = invoiceLogic.purgeEntity(id, rev)
+	override fun purgeInvoices(invoiceIds: List<IdAndRev>): Flow<DocIdentifier> = invoiceLogic.purgeEntities(invoiceIds)
 	override suspend fun undeleteInvoice(id: String, rev: String): Invoice = invoiceLogic.undeleteEntity(id, rev)
+	override fun undeleteInvoices(invoiceIds: List<IdAndRev>): Flow<Invoice> = invoiceLogic.undeleteEntities(invoiceIds)
+
 	override fun bulkShareOrUpdateMetadata(requests: BulkShareOrUpdateMetadataParams): Flow<EntityBulkShareResult<Invoice>> = invoiceLogic.bulkShareOrUpdateMetadata(requests)
 }

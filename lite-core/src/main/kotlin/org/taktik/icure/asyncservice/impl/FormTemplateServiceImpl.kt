@@ -1,6 +1,7 @@
 package org.taktik.icure.asyncservice.impl
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
 import org.taktik.couchdb.DocIdentifier
 import org.taktik.couchdb.entity.IdAndRev
@@ -10,28 +11,41 @@ import org.taktik.icure.entities.FormTemplate
 
 @Service
 class FormTemplateServiceImpl(
-    private val formTemplateLogic: FormTemplateLogic
+	private val formTemplateLogic: FormTemplateLogic
 ) : FormTemplateService {
-    override fun createFormTemplates(
-        entities: Collection<FormTemplate>,
-        createdEntities: Collection<FormTemplate>
-    ): Flow<FormTemplate> = formTemplateLogic.createFormTemplates(entities, createdEntities)
+	override fun createFormTemplates(
+		entities: Collection<FormTemplate>,
+		createdEntities: Collection<FormTemplate>
+	): Flow<FormTemplate> = formTemplateLogic.createFormTemplates(entities, createdEntities)
 
-    override suspend fun createFormTemplate(entity: FormTemplate): FormTemplate = formTemplateLogic.createFormTemplate(entity)
+	override fun modifyFormTemplates(formTemplates: List<FormTemplate>): Flow<FormTemplate> = formTemplateLogic.modifyEntities(formTemplates)
+	override fun getFormTemplates(formTemplateIds: List<String>): Flow<FormTemplate> = formTemplateLogic.getEntities(formTemplateIds)
+	override suspend fun createFormTemplate(entity: FormTemplate): FormTemplate = formTemplateLogic.createEntity(entity)
+	override suspend fun getFormTemplate(formTemplateId: String): FormTemplate? = formTemplateLogic.getEntity(formTemplateId)
 
-    override suspend fun getFormTemplate(formTemplateId: String): FormTemplate? = formTemplateLogic.getFormTemplate(formTemplateId)
+	@Suppress("DEPRECATION")
+	@Deprecated("This method has unintuitive behaviour, read FormTemplateService.getFormTemplatesByGuid doc for more info")
+	override fun getFormTemplatesByGuid(
+		userId: String,
+		specialityCode: String,
+		formTemplateGuid: String
+	): Flow<FormTemplate> = formTemplateLogic.getFormTemplatesByGuid(userId, specialityCode, formTemplateGuid)
 
-    override fun getFormTemplatesByGuid(
-        userId: String,
-        specialityCode: String,
-        formTemplateGuid: String
-    ): Flow<FormTemplate> = formTemplateLogic.getFormTemplatesByGuid(userId, specialityCode, formTemplateGuid)
+	override fun getFormTemplatesBySpecialty(specialityCode: String, loadLayout: Boolean): Flow<FormTemplate> = formTemplateLogic.getFormTemplatesBySpecialty(specialityCode, loadLayout)
+	override fun getFormTemplatesByUser(userId: String, loadLayout: Boolean): Flow<FormTemplate> = formTemplateLogic.getFormTemplatesByUser(userId, loadLayout)
 
-    override fun getFormTemplatesBySpecialty(specialityCode: String, loadLayout: Boolean): Flow<FormTemplate> = formTemplateLogic.getFormTemplatesBySpecialty(specialityCode, loadLayout)
+	override suspend fun undeleteFormTemplate(
+		formTemplateId: String,
+		rev: String
+	): FormTemplate = formTemplateLogic.deleteEntity(formTemplateId, rev)
 
-    override fun getFormTemplatesByUser(userId: String, loadLayout: Boolean): Flow<FormTemplate> = formTemplateLogic.getFormTemplatesByUser(userId, loadLayout)
+	override suspend fun deleteFormTemplate(id: String, rev: String?): DocIdentifier = formTemplateLogic.deleteEntity(id, rev).let { DocIdentifier(it.id, it.rev) }
 
-    override suspend fun modifyFormTemplate(formTemplate: FormTemplate): FormTemplate? = formTemplateLogic.modifyFormTemplate(formTemplate)
+	override suspend fun modifyFormTemplate(formTemplate: FormTemplate): FormTemplate = formTemplateLogic.modifyEntity(formTemplate)
 
-    override fun deleteFormTemplates(ids: Set<String>): Flow<FormTemplate> = formTemplateLogic.deleteEntities(ids.map { IdAndRev(it, null) })
+	override fun deleteFormTemplates(ids: List<String>): Flow<FormTemplate> = formTemplateLogic.deleteEntities(ids.map { IdAndRev(it, null) })
+	override fun deleteFormTemplatesWithRev(formTemplateIds: List<IdAndRev>): Flow<DocIdentifier> = formTemplateLogic.deleteEntities(formTemplateIds).map { DocIdentifier(it.id, it.rev) }
+	override fun undeleteFormTemplates(formTemplateIds: List<IdAndRev>): Flow<FormTemplate> = formTemplateLogic.undeleteEntities(formTemplateIds)
+	override suspend fun purgeFormTemplate(id: String, rev: String): DocIdentifier = formTemplateLogic.purgeEntity(id, rev)
+	override fun purgeFormTemplates(formTemplateIds: List<IdAndRev>): Flow<DocIdentifier> = formTemplateLogic.purgeEntities(formTemplateIds)
 }

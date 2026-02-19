@@ -1,7 +1,6 @@
 package org.taktik.icure.asyncservice.impl
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.single
 import org.springframework.stereotype.Service
 import org.taktik.couchdb.DocIdentifier
 import org.taktik.couchdb.entity.IdAndRev
@@ -15,28 +14,34 @@ import java.nio.ByteBuffer
 
 @Service
 class ReceiptServiceImpl(
-    private val receiptLogic: ReceiptLogic
+	private val receiptLogic: ReceiptLogic
 ) : ReceiptService {
-    override suspend fun createReceipt(receipt: Receipt): Receipt? = receiptLogic.createReceipt(receipt)
+	override suspend fun createReceipt(receipt: Receipt): Receipt = receiptLogic.createReceipt(receipt)
 
-    override suspend fun modifyReceipt(receipt: Receipt): Receipt = receiptLogic.modifyEntities(listOf(receipt)).single()
+	override suspend fun modifyReceipt(receipt: Receipt): Receipt = receiptLogic.modifyEntity(receipt)
+	override fun modifyReceipts(receipts: List<Receipt>): Flow<Receipt> = receiptLogic.modifyEntities(receipts)
 
-    override fun listReceiptsByReference(ref: String): Flow<Receipt> = receiptLogic.listReceiptsByReference(ref)
+	override fun listReceiptsByReference(ref: String): Flow<Receipt> = receiptLogic.listReceiptsByReference(ref)
 
-    override fun getAttachment(receiptId: String, attachmentId: String): Flow<ByteBuffer> = receiptLogic.getAttachment(receiptId, attachmentId)
+	override fun getAttachment(receiptId: String, attachmentId: String): Flow<ByteBuffer> = receiptLogic.getAttachment(receiptId, attachmentId)
 
-    override suspend fun addReceiptAttachment(
-        receipt: Receipt,
-        blobType: ReceiptBlobType,
-        payload: ByteArray
-    ): Receipt = receiptLogic.addReceiptAttachment(receipt, blobType, payload)
+	override suspend fun addReceiptAttachment(
+		receipt: Receipt,
+		blobType: ReceiptBlobType,
+		payload: ByteArray
+	): Receipt = receiptLogic.addReceiptAttachment(receipt, blobType, payload)
 
-    override fun createReceipts(receipts: Collection<Receipt>): Flow<Receipt> = receiptLogic.createEntities(receipts)
-    override fun deleteReceipts(ids: List<IdAndRev>): Flow<Receipt> = receiptLogic.deleteEntities(ids)
-    override suspend fun deleteReceipt(id: String, rev: String?): Receipt = receiptLogic.deleteEntity(id, rev)
-    override suspend fun purgeReceipt(id: String, rev: String): DocIdentifier = receiptLogic.purgeEntity(id, rev)
-    override suspend fun undeleteReceipt(id: String, rev: String): Receipt = receiptLogic.undeleteEntity(id, rev)
-    override suspend fun getReceipt(id: String): Receipt? = receiptLogic.getEntity(id)
+	override fun createReceipts(receipts: Collection<Receipt>): Flow<Receipt> = receiptLogic.createEntities(receipts)
+	override fun deleteReceipts(ids: List<IdAndRev>): Flow<Receipt> = receiptLogic.deleteEntities(ids)
+	override suspend fun deleteReceipt(id: String, rev: String?): Receipt = receiptLogic.deleteEntity(id, rev)
+	override suspend fun purgeReceipt(id: String, rev: String): DocIdentifier = receiptLogic.purgeEntity(id, rev)
+	override fun purgeReceipts(receiptIds: List<IdAndRev>): Flow<DocIdentifier> = receiptLogic.purgeEntities(receiptIds)
 
-    override fun bulkShareOrUpdateMetadata(requests: BulkShareOrUpdateMetadataParams): Flow<EntityBulkShareResult<Receipt>> = receiptLogic.bulkShareOrUpdateMetadata(requests)
+	override suspend fun undeleteReceipt(id: String, rev: String): Receipt = receiptLogic.undeleteEntity(id, rev)
+	override fun undeleteReceipts(receiptIds: List<IdAndRev>): Flow<Receipt> = receiptLogic.undeleteEntities(receiptIds)
+
+	override suspend fun getReceipt(id: String): Receipt? = receiptLogic.getEntity(id)
+	override fun getReceipts(receiptIds: List<String>): Flow<Receipt> = receiptLogic.getEntities(receiptIds)
+
+	override fun bulkShareOrUpdateMetadata(requests: BulkShareOrUpdateMetadataParams): Flow<EntityBulkShareResult<Receipt>> = receiptLogic.bulkShareOrUpdateMetadata(requests)
 }
