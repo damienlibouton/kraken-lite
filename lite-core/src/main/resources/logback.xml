@@ -11,6 +11,7 @@
         </filter>
     </appender>
 
+    <property scope="local" name="logFilePath" value="${logging.file.name:-_DISABLED_}" />
     <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${logging.file.name}</file>
 
@@ -61,6 +62,13 @@
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="ROLLING_FILE" />
     </root>
+
+    <if condition='!property("logFilePath").equals("_DISABLED_")'>
+        <then>
+            <root level="INFO">
+                <appender-ref ref="ROLLING_FILE" />
+            </root>
+        </then>
+    </if>
 </configuration>
