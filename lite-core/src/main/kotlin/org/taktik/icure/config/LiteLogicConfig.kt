@@ -118,12 +118,12 @@ class LiteLogicConfig {
 	@Bean
 	fun liteFixer(
 		sessionInformationProvider: SessionInformationProvider,
-		liteConfig: LiteConfig
+		liteConfig: LiteCardinalVersionConfig
 	): Fixer = FixerImpl(
 		fixedValueProvider = CommonFixedValueProvider(
 			dataOwnerProvider = sessionInformationProvider
 		),
-		forceSkipLegacyFixing = liteConfig.useCardinalDataModel
+		forceSkipLegacyFixing = liteConfig.isConfiguredForCardinalModel()
 	)
 
 	@Bean
